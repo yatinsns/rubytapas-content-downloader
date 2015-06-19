@@ -33,10 +33,33 @@ def get_page url
   Nokogiri::HTML(open(url))
 end
 
-def main
+def get_selected_screencasts_in_range(start_id, end_id)
   page = get_page "./content.html"
   screencast_info = get_screencast_info page
-  puts screencast_info
+
+  screencast_info.select do |screencast|
+    start_id <= screencast[0] && screencast[0] <= end_id
+  end
+end
+
+def download_screencast screencast
+  puts "Fetching #{screencast[0]} from #{screencast[2]}"
+end
+
+def download_screencasts_in_range(start_id, end_id)
+  selected_screencasts = get_selected_screencasts_in_range(start_id, end_id)
+  selected_screencasts.each do |screencast|
+    download_screencast screencast
+  end
+end
+
+def main
+  print "start id: "
+  start_id = STDIN.gets.chomp.to_i
+  print "end id: "
+  end_id = STDIN.gets.chomp.to_i
+
+  download_screencasts_in_range(start_id, end_id)
 end
 
 main if __FILE__ == $0
